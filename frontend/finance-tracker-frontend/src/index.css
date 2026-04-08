@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+/* Remove default Recharts focus/hover outlines and strokes */
+.recharts-wrapper *:focus {
+  outline: none !important;
+}
+
+.recharts-sector,
+.recharts-rectangle,
+.recharts-bar-rectangle path {
+  stroke: none !important;
+}
