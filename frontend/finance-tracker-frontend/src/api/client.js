@@ -1,11 +1,12 @@
 import axios from "axios";
 
 /**
- * Shared API client for the app.
+ * Shared API client for app.
  * Uses httpOnly cookies (withCredentials) and optionally a per-tab bearer token
  * stored in sessionStorage to prevent cross-tab identity mixing.
  */
 const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000",
   withCredentials: true,
 });
 
@@ -40,4 +41,3 @@ export function broadcastAuthChanged() {
 }
 
 export default api;
-

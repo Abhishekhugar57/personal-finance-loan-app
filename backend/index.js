@@ -51,25 +51,47 @@ app.get("/", (req, res) => {
 });
 app.post("/signup", async (req, res) => {
   try {
+    console.log("🔍 SIGNUP REQUEST RECEIVED");
+    console.log("📝 Request body:", req.body);
+
     const { userName, email, password } = req.body;
+    console.log("📧 Extracted email:", email);
+    console.log("👤 Extracted username:", userName);
+
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("🔐 Password hashed");
+
     const existingUser = await User.findOne({ email });
-    // if (existingUser) return;
+    console.log(
+      "🔍 Existing user check:",
+      existingUser ? "Found" : "Not found"
+    );
+
     if (existingUser) {
+      console.log("⚠️ User already exists");
       return res.status(400).json({ message: "User already exists" });
     }
+
     const user = new User({
       userName,
       email,
       password: hashedPassword,
     });
-    await user.save();
+
+    console.log("💾 Attempting to save user to Atlas...");
+    const savedUser = await user.save();
+    console.log("✅ User saved successfully!");
+    console.log("🆔 Saved user ID:", savedUser._id);
+    console.log("📊 Database:", mongoose.connection.name);
+
     res.status(201).json({
       message: "User created successfully",
-      user,
+      user: savedUser,
     });
   } catch (err) {
-    res.status(400).send("error", err.message);
+    console.error("❌ SIGNUP ERROR:", err.message);
+    console.error("📋 Full error:", err);
+    res.status(400).json({ error: err.message });
   }
 });
 app.post("/login", async (req, res) => {
@@ -93,8 +115,8 @@ app.post("/login", async (req, res) => {
     );
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "none", // 🔥 change this
-      secure: true, // 🔥 required for sameSite none
+      sameSite: "lax", // Changed for local development
+      secure: false, // Changed for local development
     });
     res.status(200).json({
       message: "Login successful",
