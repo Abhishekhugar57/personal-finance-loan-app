@@ -5,10 +5,10 @@
   "type": "module",
   "proxy": "https://localhost:5173/",
   "scripts": {
-    "dev": "npx vite",
-    "build": "npx vite build",
-    "lint": "npx eslint .",
-    "preview": "npx vite preview"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
