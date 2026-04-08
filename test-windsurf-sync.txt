@@ -1,0 +1,2 @@
+Test file to verify Windsurf workspace sync with GitHub
+Created: 2026-04-08
