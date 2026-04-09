@@ -1,19 +1,13 @@
 {
   "version": 2,
-  "builds": [
+  "buildCommand": "cd frontend/finance-tracker-frontend && npm run build",
+  "outputDirectory": "frontend/finance-tracker-frontend/dist",
+  "installCommand": "cd frontend/finance-tracker-frontend && npm install",
+  "framework": "vite",
+  "rewrites": [
     {
-      "src": "backend/index.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/backend/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/finance-tracker-frontend/index.html"
+      "source": "/(.*)",
+      "destination": "/frontend/finance-tracker-frontend/index.html"
     }
   ]
 }
