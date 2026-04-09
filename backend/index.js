@@ -29,6 +29,7 @@ app.use(
         "http://localhost:5173",
         "http://localhost:5174",
         "https://personal-finance-loan-app.onrender.com",
+        "https://personal-finance-loan-app-ymzo-a9keddx3l.vercel.app",
         "https://your-vercel-app.vercel.app",
       ];
       if (!origin || allowedOrigins.includes(origin)) {
