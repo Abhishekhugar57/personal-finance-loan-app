@@ -1,0 +1,11 @@
+// Production API configuration
+export const PRODUCTION_API_URL = "https://your-backend-api.onrender.com";
+
+// Development API configuration
+export const DEVELOPMENT_API_URL = "http://localhost:5000";
+
+// Determine API URL based on environment
+export const API_BASE_URL =
+  import.meta.env.MODE === "production"
+    ? PRODUCTION_API_URL
+    : import.meta.env.VITE_API_URL || DEVELOPMENT_API_URL;

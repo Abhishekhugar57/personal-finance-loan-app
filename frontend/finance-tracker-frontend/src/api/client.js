@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_BASE_URL } from "../api/production";
 
 /**
  * Shared API client for app.
@@ -6,7 +7,7 @@ import axios from "axios";
  * stored in sessionStorage to prevent cross-tab identity mixing.
  */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000",
+  baseURL: API_BASE_URL,
   withCredentials: true,
 });
 
