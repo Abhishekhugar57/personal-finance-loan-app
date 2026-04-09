@@ -24,11 +24,16 @@ const app = express();
 
 app.use(
   cors({
-    origin: true, // Always reflect request origin (localhost:5173 or 5174)
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "https://personal-finance-loan-app.onrender.com",
+      "https://your-vercel-app.vercel.app",
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 // 🔥 ADD THIS RIGHT HERE
@@ -64,7 +69,7 @@ app.post("/signup", async (req, res) => {
     const existingUser = await User.findOne({ email });
     console.log(
       "🔍 Existing user check:",
-      existingUser ? "Found" : "Not found"
+      existingUser ? "Found" : "Not found",
     );
 
     if (existingUser) {
@@ -101,7 +106,7 @@ app.post("/login", async (req, res) => {
     if (!existingUser) return res.status(401).send("please signup");
     const isPasswordValid = await bcrypt.compare(
       password,
-      existingUser.password
+      existingUser.password,
     );
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid email or password" });
@@ -111,7 +116,7 @@ app.post("/login", async (req, res) => {
       process.env.JWT_SECRET,
       {
         expiresIn: "7d",
-      }
+      },
     );
     res.cookie("token", token, {
       httpOnly: true,
@@ -196,7 +201,7 @@ app.put("/user/profile", userAuth, async (req, res) => {
           email: nextEmail,
         },
       },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     ).select("_id userName email");
 
     if (!updatedUser) {
@@ -286,7 +291,7 @@ app.patch("/account/:id", userAuth, async (req, res) => {
     const account = await Account.findOneAndUpdate(
       { _id: req.params.id, userId: req.userId },
       req.body,
-      { new: true }
+      { new: true },
     );
 
     if (!account) {
@@ -349,7 +354,7 @@ app.patch("/categoryupdate/:id", userAuth, async (req, res) => {
     const category = await Category.findOneAndUpdate(
       { _id: req.params.id, userId: req.userId },
       req.body,
-      { new: true }
+      { new: true },
     );
 
     if (!category)
@@ -562,7 +567,7 @@ app.put("/transactions/:id", userAuth, async (req, res) => {
           transaction_date: updatedDate ?? transaction.transaction_date,
         },
       },
-      { new: true }
+      { new: true },
     );
 
     if (!updated) {
@@ -808,7 +813,7 @@ app.get("/dashboard/overview", userAuth, async (req, res) => {
 
     const totalBalance = accounts.reduce(
       (acc, account) => acc + (account.balance || 0),
-      0
+      0,
     );
 
     /* =========================
@@ -881,7 +886,7 @@ app.get("/dashboard/overview", userAuth, async (req, res) => {
     });
 
     const monthlyData = Object.values(monthlyMap).sort(
-      (a, b) => a.sortDate - b.sortDate
+      (a, b) => a.sortDate - b.sortDate,
     );
 
     const categoryBreakdown = Object.keys(categoryMap).map((key) => ({
