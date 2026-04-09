@@ -319,6 +319,7 @@ import {
   LogIn,
   UserPlus,
   ShieldCheck,
+  Wallet,
 } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { addUser } from "../store/userSlice";
