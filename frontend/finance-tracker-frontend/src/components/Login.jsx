@@ -318,6 +318,7 @@ import {
   Loader2,
   LogIn,
   UserPlus,
+  ShieldCheck,
 } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { addUser } from "../store/userSlice";
