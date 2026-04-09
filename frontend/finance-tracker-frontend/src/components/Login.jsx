@@ -316,12 +316,12 @@ import {
   Eye,
   EyeOff,
   Loader2,
-  ShieldCheck,
-  Wallet,
+  LogIn,
+  UserPlus,
 } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { addUser } from "../store/userSlice";
-import axios from "axios";
+import api from "../api/client";
 
 const Login = () => {
   const [isSignedInForm, setIsSignedInForm] = useState(true);
@@ -367,17 +367,9 @@ const Login = () => {
     try {
       if (isSignedInForm) {
         // Sign In
-        const res = await axios({
-          method: "post",
-          url: "/api/login",
-          data: {
-            email: emailValue,
-            password: passwordValue,
-          },
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
+        const res = await api.post("/login", {
+          email: emailValue,
+          password: passwordValue,
         });
 
         // Dispatch user to redux store
@@ -397,17 +389,11 @@ const Login = () => {
           return;
         }
 
-        const res = await axios.post(
-          "/api/signup",
-          {
-            userName: nameValue,
-            email: emailValue,
-            password: passwordValue,
-          },
-          {
-            withCredentials: true,
-          }
-        );
+        const res = await api.post("/signup", {
+          userName: nameValue,
+          email: emailValue,
+          password: passwordValue,
+        });
 
         // Automatically switch to Sign In form after successful signup
         setIsSignedInForm(true);
@@ -465,101 +451,101 @@ const Login = () => {
 
           <div className="relative z-10">
             <h1 className="text-xl md:text-3xl font-bold tracking-tight text-center mb-2 text-slate-900 leading-tight">
-            {isSignedInForm ? "Welcome Back" : "Create Account"}
+              {isSignedInForm ? "Welcome Back" : "Create Account"}
             </h1>
 
             <p className="text-center text-gray-500 mb-7 text-sm">
-            {isSignedInForm
-              ? "Sign in to continue managing your finances"
-              : "Start tracking your personal finances today"}
+              {isSignedInForm
+                ? "Sign in to continue managing your finances"
+                : "Start tracking your personal finances today"}
             </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {!isSignedInForm && (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isSignedInForm && (
+                <input
+                  ref={fullName}
+                  type="text"
+                  placeholder="Full Name"
+                  className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 md:py-3.5 text-sm text-slate-800 shadow-sm outline-none placeholder:text-gray-400 transition-all duration-200 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+                />
+              )}
+
+              {isSignedInForm && (
+                <div className="flex justify-end">
+                  {/* intentionally empty: forgot-password link removed */}
+                </div>
+              )}
+
               <input
-                ref={fullName}
-                type="text"
-                placeholder="Full Name"
+                ref={email}
+                type="email"
+                placeholder="Email Address"
                 className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 md:py-3.5 text-sm text-slate-800 shadow-sm outline-none placeholder:text-gray-400 transition-all duration-200 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
               />
-            )}
 
-            {isSignedInForm && (
-              <div className="flex justify-end">
-                {/* intentionally empty: forgot-password link removed */}
+              <div className="relative">
+                <input
+                  ref={password}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 md:py-3.5 text-sm text-slate-800 shadow-sm outline-none placeholder:text-gray-400 transition-all duration-200 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-transform duration-200 hover:text-slate-900 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-lg p-1"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
-            )}
 
-            <input
-              ref={email}
-              type="email"
-              placeholder="Email Address"
-                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 md:py-3.5 text-sm text-slate-800 shadow-sm outline-none placeholder:text-gray-400 transition-all duration-200 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
-            />
+              {errMessage && (
+                <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-2 rounded-lg">
+                  {errMessage}
+                </div>
+              )}
 
-            <div className="relative">
-              <input
-                ref={password}
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 md:py-3.5 text-sm text-slate-800 shadow-sm outline-none placeholder:text-gray-400 transition-all duration-200 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 pr-12"
-              />
               <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-transform duration-200 hover:text-slate-900 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-lg p-1"
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-
-            {errMessage && (
-              <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-2 rounded-lg">
-                {errMessage}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full py-2.5 md:py-3.5 rounded-xl font-semibold tracking-wide transition-all duration-200 flex items-center justify-center gap-2 shadow-md bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 active:scale-[0.98] hover:scale-[1.01]
+                type="submit"
+                disabled={loading}
+                className={`w-full py-2.5 md:py-3.5 rounded-xl font-semibold tracking-wide transition-all duration-200 flex items-center justify-center gap-2 shadow-md bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 active:scale-[0.98] hover:scale-[1.01]
                 ${loading ? "opacity-80 cursor-not-allowed" : ""}`}
+              >
+                {loading && <Loader2 size={18} className="animate-spin" />}
+                {isSignedInForm ? "Sign In" : "Sign Up"}
+              </button>
+            </form>
+
+            {/* OR divider */}
+            <div className="relative mt-4 md:mt-5">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center">
+                <span className="px-3 bg-white/70 text-xs text-gray-400 font-semibold">
+                  OR
+                </span>
+              </div>
+            </div>
+
+            {/* Optional secondary button (same toggle functionality) */}
+            <button
+              type="button"
+              onClick={() => setIsSignedInForm(!isSignedInForm)}
+              className="mt-4 w-full py-2.5 md:py-3.5 rounded-xl font-semibold border border-gray-200 bg-gray-50 hover:bg-gray-100 active:scale-[0.99] transition-all duration-200 hover:scale-[1.01]"
             >
-              {loading && <Loader2 size={18} className="animate-spin" />}
-              {isSignedInForm ? "Sign In" : "Sign Up"}
+              {isSignedInForm ? "Create Account" : "Sign In"}
             </button>
-          </form>
 
-          {/* OR divider */}
-          <div className="relative mt-4 md:mt-5">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200" />
-            </div>
-            <div className="relative flex justify-center">
-              <span className="px-3 bg-white/70 text-xs text-gray-400 font-semibold">
-                OR
-              </span>
-            </div>
+            <p
+              onClick={() => setIsSignedInForm(!isSignedInForm)}
+              className="mt-6 text-center text-sm text-gray-500 hover:text-slate-900 cursor-pointer transition-colors"
+            >
+              {isSignedInForm
+                ? "New user? Create an account"
+                : "Already registered? Sign in"}
+            </p>
           </div>
-
-          {/* Optional secondary button (same toggle functionality) */}
-          <button
-            type="button"
-            onClick={() => setIsSignedInForm(!isSignedInForm)}
-            className="mt-4 w-full py-2.5 md:py-3.5 rounded-xl font-semibold border border-gray-200 bg-gray-50 hover:bg-gray-100 active:scale-[0.99] transition-all duration-200 hover:scale-[1.01]"
-          >
-            {isSignedInForm ? "Create Account" : "Sign In"}
-          </button>
-
-          <p
-            onClick={() => setIsSignedInForm(!isSignedInForm)}
-            className="mt-6 text-center text-sm text-gray-500 hover:text-slate-900 cursor-pointer transition-colors"
-          >
-            {isSignedInForm
-              ? "New user? Create an account"
-              : "Already registered? Sign in"}
-          </p>
-            </div>
         </div>
       </div>
     </div>

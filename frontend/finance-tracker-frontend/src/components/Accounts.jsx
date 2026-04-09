@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/client";
 import { Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,9 +9,7 @@ const Accounts = () => {
 
   const fetchAccounts = async () => {
     try {
-      const res = await axios.get("/api/get/account", {
-        withCredentials: true,
-      });
+      const res = await api.get("/get/account");
 
       setAccounts(res.data);
     } catch (err) {
@@ -28,9 +26,7 @@ const Accounts = () => {
       return;
 
     try {
-      await axios.delete(`/api/accountdelete/${id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/accountdelete/${id}`);
 
       fetchAccounts();
     } catch (err) {

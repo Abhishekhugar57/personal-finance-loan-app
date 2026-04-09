@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/client";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -178,9 +178,7 @@ const EditTransactionModal = ({
     if (!open || !editTransaction) return;
     setAmount(editTransaction.amount ?? "");
     setCategoryId(
-      editTransaction.category_id?._id ??
-        editTransaction.category_id ??
-        ""
+      editTransaction.category_id?._id ?? editTransaction.category_id ?? "",
     );
     setDescription(editTransaction.note ?? "");
     setDate(toDateInputValue(editTransaction.transaction_date));
@@ -204,14 +202,14 @@ const EditTransactionModal = ({
         className="w-full max-w-md overflow-y-auto rounded-lg md:rounded-xl bg-white p-3 shadow-lg max-h-[85vh] md:max-h-[90vh] md:p-6"
         onMouseDown={(e) => e.stopPropagation()}
       >
-          <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-3">
           <div>
-              <h2 className="text-lg font-semibold text-gray-900 leading-tight">
-                Edit Transaction
-              </h2>
-              <p className="mt-1 text-sm text-gray-500 leading-tight">
-                Update amount, category, note, and date.
-              </p>
+            <h2 className="text-lg font-semibold text-gray-900 leading-tight">
+              Edit Transaction
+            </h2>
+            <p className="mt-1 text-sm text-gray-500 leading-tight">
+              Update amount, category, note, and date.
+            </p>
           </div>
           <button
             type="button"
@@ -267,8 +265,8 @@ const EditTransactionModal = ({
                 {categoriesLoading
                   ? "Loading..."
                   : filteredCategories.length
-                  ? "Select category"
-                  : "No categories available"}
+                    ? "Select category"
+                    : "No categories available"}
               </option>
               {filteredCategories.map((c) => (
                 <option key={c._id} value={c._id}>
@@ -292,9 +290,7 @@ const EditTransactionModal = ({
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-semibold text-gray-600">
-              Date
-            </label>
+            <label className="text-xs font-semibold text-gray-600">Date</label>
             <input
               type="date"
               required
@@ -385,10 +381,7 @@ const Transactions = () => {
   const fetchTransactions = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        `/api/transactions?page=${page}&limit=${limit}`,
-        { withCredentials: true }
-      );
+      const res = await api.get(`/transactions?page=${page}&limit=${limit}`);
       setTransactions(res.data || []);
     } catch (err) {
       console.error(err);
@@ -404,9 +397,7 @@ const Transactions = () => {
   const fetchCategories = async () => {
     try {
       setCategoriesLoading(true);
-      const res = await axios.get("/api/get/categories", {
-        withCredentials: true,
-      });
+      const res = await api.get("/get/categories");
       setCategories(res.data?.data || res.data || []);
     } catch (err) {
       console.error(err);
@@ -452,15 +443,15 @@ const Transactions = () => {
         date,
       };
 
-      const res = await axios.put(
-        `/api/transactions/${editTransaction._id}`,
+      const res = await api.put(
+        `/transactions/${editTransaction._id}`,
         payload,
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       const updated = res.data;
       setTransactions((prev) =>
-        prev.map((txn) => (txn._id === updated._id ? updated : txn))
+        prev.map((txn) => (txn._id === updated._id ? updated : txn)),
       );
 
       toast.success("Transaction updated");
@@ -483,9 +474,7 @@ const Transactions = () => {
       return;
 
     try {
-      await axios.delete(`/api/transactions/${id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/transactions/${id}`);
       fetchTransactions();
     } catch (err) {
       console.error(err);
@@ -542,7 +531,10 @@ const Transactions = () => {
 
           {/* Filters */}
           <div className="mt-4 md:mt-5 flex items-center gap-2 flex-wrap">
-            <Pill active={filterType === "all"} onClick={() => setFilterType("all")}>
+            <Pill
+              active={filterType === "all"}
+              onClick={() => setFilterType("all")}
+            >
               All
             </Pill>
             <Pill

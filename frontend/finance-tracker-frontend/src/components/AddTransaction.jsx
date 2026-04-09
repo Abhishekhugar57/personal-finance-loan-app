@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/client";
 import { useNavigate } from "react-router-dom";
 
 const AddTransaction = () => {
@@ -22,9 +22,7 @@ const AddTransaction = () => {
   // ================= FETCH ACCOUNTS =================
   const fetchAccounts = async () => {
     try {
-      const res = await axios.get("/api/get/account", {
-        withCredentials: true,
-      });
+      const res = await api.get("/get/account");
 
       const accountsData = res.data.data || res.data || [];
       setAccounts(accountsData);
@@ -37,9 +35,7 @@ const AddTransaction = () => {
   // ================= FETCH CATEGORIES =================
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("/api/get/categories", {
-        withCredentials: true,
-      });
+      const res = await api.get("/get/categories");
 
       const categoriesData = res.data.data || res.data || [];
       setCategories(categoriesData);
@@ -72,9 +68,7 @@ const AddTransaction = () => {
     try {
       setLoading(true);
 
-      await axios.post("/api/transactions", formData, {
-        withCredentials: true,
-      });
+      await api.post("/transactions", formData);
 
       navigate("/transactions");
     } catch (err) {
@@ -85,7 +79,7 @@ const AddTransaction = () => {
   };
 
   const filteredCategories = categories.filter(
-    (cat) => cat.type === formData.type
+    (cat) => cat.type === formData.type,
   );
 
   return (
